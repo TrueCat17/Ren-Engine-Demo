@@ -21,6 +21,7 @@ init:
 	image bg ship-2  = 'images/bg/ship/2.jpg'
 	image bg ship-3  = 'images/bg/ship/3.jpg'
 	image bg ship-4  = 'images/bg/ship/4.jpg'
+	image bg ship-5  = 'images/bg/ship/5.jpg'
 	
 	image bg mr_pre_meet  = 'images/bg/roots/mr/pre_meet.jpg'
 	image bg mr_meet      = 'images/bg/roots/mr/meet.jpg'
