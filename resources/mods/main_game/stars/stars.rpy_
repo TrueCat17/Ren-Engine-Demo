@@ -1,0 +1,91 @@
+init python:
+	def get_color_str(i):
+		r = hex(i)[2:]
+		return '0' * (6 - len(r)) + r
+	
+	def get_radius(a, b):
+		va = math.pi * 4 / 3 * a**3
+		vb = math.pi * 4 / 3 * b**3
+		v = va + vb
+		r = (v * 3 / 4 / math.pi) ** (1/3.0)
+		return r
+	
+	def get_dx(a, b):
+		return (a.x - b.x)
+	def get_dy(a, b):
+		return (a.y - b.y)
+	
+	scale = 1.2
+	count = 50
+	size = 1
+	cx, cy = get_stage_width() / 2, get_stage_height() / 2
+	
+	def get_new_star():
+		star = Object()
+		star.radius = random.randint(1, size) + 0.0
+		star.mass = star.radius
+		
+		star.x = random.randint(100, get_stage_width() - 100)
+		star.y = random.randint(100, get_stage_height() - 100)
+		
+		star.vx, star.vy = 0, 0
+		
+		star.color = random.randint(0, 0xFFFFFF)
+		star.image = im.Rect(get_color_str(star.color), star.radius * 2, star.radius * 2)
+		return star
+	
+	def init():
+		global stars
+		stars = []
+		for i in xrange(count):
+			star = get_new_star()
+			stars.append(star)
+	init()
+	
+	def update_stars():
+		global stars, num_frame
+		
+		for star in stars:
+			star.ax, star.ay = 0, 0
+			for other in stars:
+				if other is not star:
+					dx, dy = get_dx(star, other), get_dy(star, other)
+					dist2 = max(dx**2 + dy**2, 1) * scale
+					
+					a = min(other.mass / dist2, 0.01) / scale
+					angle = math.atan2(dy, dx)
+					
+					star.ax -= a * math.cos(angle)
+					star.ay -= a * math.sin(angle)
+		for star in stars:
+			star.vx += star.ax
+			star.vy += star.ay
+			star.vx *= 0.9997
+			star.vy *= 0.9997
+			
+			star.x += star.vx
+			star.y += star.vy
+	
+	def update(i):
+		for _ in xrange(i):
+			update_stars()
+	
+	scale = 1.0
+	for _ in xrange(50):
+		update(10)
+		scale += 0.05
+	set_fps(5)
+
+
+
+screen stars:
+	use fps_meter
+	key "SPACE" action Function(init)
+	
+	$ update(3)
+	for star in stars:
+		image star.image:
+			pos    (int(star.x), int(star.y))
+			anchor (int(star.radius), int(star.radius))
+
+
